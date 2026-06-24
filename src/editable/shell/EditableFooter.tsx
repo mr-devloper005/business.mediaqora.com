@@ -1,44 +1,101 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 import { SITE_CONFIG } from '@/lib/site-config'
+import { mediaDistributionRoute } from '@/config/media-distribution-route'
 import { globalContent } from '@/editable/content/global.content'
 import { useEditableLocalAuthSession } from '@/editable/components/EditableLocalAuthForms'
+
+const footerLinks = [
+  { label: 'Home', href: '/' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'Updates', href: mediaDistributionRoute },
+  { label: 'Archive', href: '/search' },
+]
 
 export function EditableFooter() {
   const year = new Date().getFullYear()
   const { session, logout } = useEditableLocalAuthSession()
+  const email = `hello@${SITE_CONFIG.domain}`
 
   return (
-    <footer className="border-t-8 border-[var(--slot4-accent)] bg-black text-white">
-      <div className="mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-10 lg:py-20">
-        <div className="grid gap-12 lg:grid-cols-[1.2fr_.7fr_.7fr]">
-          <div>
-            <Link href="/" className="editorial-brand text-5xl font-black text-[var(--slot4-accent)] sm:text-6xl">{SITE_CONFIG.name}</Link>
-            <p className="mt-6 max-w-xl text-sm leading-7 text-white/62">{globalContent.footer?.description || SITE_CONFIG.description}</p>
-            <form action="/signup" className="mt-8 flex max-w-xl border border-white/35">
-              <input name="email" type="email" placeholder="Email for newsroom updates" className="min-w-0 flex-1 bg-transparent px-4 py-4 text-sm outline-none placeholder:text-white/40" />
-              <button className="bg-[var(--slot4-accent)] px-5 text-xs font-black uppercase tracking-[.14em]">Subscribe</button>
-            </form>
-          </div>
-          <div>
-            <h3 className="border-b border-white/25 pb-3 text-[10px] font-black uppercase tracking-[.22em] text-white/55">Explore</h3>
-            <div className="mt-4 grid gap-3">
-              <Link href="/search" className="group inline-flex items-center justify-between text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">Archive<ArrowRight className="h-4 w-4" /></Link>
-            </div>
-          </div>
-          <div>
-            <h3 className="border-b border-white/25 pb-3 text-[10px] font-black uppercase tracking-[.22em] text-white/55">Publication</h3>
-            <div className="mt-4 grid gap-3">
-              <Link href="/about" className="text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">About</Link>
-              <Link href="/contact" className="text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">Contact</Link>
-              {session ? <><Link href="/create" className="text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">Publish</Link><button onClick={logout} className="text-left text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">Logout</button></> : <><Link href="/login" className="text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">Log in</Link><Link href="/signup" className="text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">Subscribe</Link></>}
-            </div>
+    <footer className="border-t border-white/10 bg-black text-white">
+      {/* Big CTA band */}
+      <div className="mx-auto max-w-[var(--editable-container)] px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
+        <div className="reveal">
+          <h2 className="text-[13vw] font-black uppercase leading-[0.84] tracking-[-0.05em] lg:text-[9rem]">
+            Story to <span className="text-[var(--slot4-accent)]">share?</span>
+          </h2>
+          <div className="mt-10 grid gap-8 border-t border-white/12 pt-8 lg:grid-cols-[auto_1fr_auto] lg:items-start">
+            <p className="mono-label text-[11px] font-bold uppercase tracking-[0.26em] text-white/60">
+              → Let&apos;s distribute
+            </p>
+            <p className="max-w-xl text-sm leading-7 text-white/55">
+              {globalContent.footer?.description || SITE_CONFIG.description}
+            </p>
+            <Link
+              href="/contact"
+              className="mono-label inline-flex w-fit items-center gap-2 rounded-full bg-white px-7 py-4 text-[11px] font-bold uppercase tracking-[0.2em] text-black transition hover:bg-[var(--slot4-accent)] hover:text-white"
+            >
+              Submit an update <ArrowUpRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </div>
-      <div className="border-t border-white/20 px-4 py-5 text-center text-[10px] font-black uppercase tracking-[.18em] text-white/45">© {year} {SITE_CONFIG.name}. Independent media and public information.</div>
+
+      {/* Identity + sitemap */}
+      <div className="mx-auto grid max-w-[var(--editable-container)] gap-12 border-t border-white/12 px-5 py-16 sm:px-8 lg:grid-cols-[1.3fr_0.7fr] lg:px-12">
+        <div>
+          <Link href="/" className="flex items-baseline gap-1">
+            <span className="text-3xl font-black tracking-[-0.04em]">{SITE_CONFIG.name}</span>
+            <span className="text-base font-black text-[var(--slot4-accent)]">®</span>
+          </Link>
+          <a
+            href="/contact"
+            className="mt-7 block max-w-xl break-words text-3xl font-black leading-[1.05] tracking-[-0.04em] text-white/90 transition hover:text-[var(--slot4-accent)] sm:text-5xl"
+          >
+            Let&apos;s work together!
+          </a>
+          <p className="mt-6 max-w-md text-sm leading-7 text-white/45">{SITE_CONFIG.tagline}</p>
+        </div>
+
+        <nav className="lg:pl-8">
+          {footerLinks.map((item, index) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="group flex items-center justify-between border-b border-white/12 py-4 text-sm font-black uppercase tracking-[0.08em] text-white/85 transition hover:text-[var(--slot4-accent)]"
+            >
+              <span className="flex items-center gap-3">
+                <ArrowUpRight className="h-4 w-4 text-[var(--slot4-accent)]" /> {item.label}
+              </span>
+              <span className="mono-label text-[11px] text-white/40">{String(index + 1).padStart(2, '0')}</span>
+            </Link>
+          ))}
+          <div className="mt-5 flex flex-wrap gap-3">
+            {session ? (
+              <>
+                <Link href="/create" className="mono-label rounded-full border border-white/20 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] hover:border-white/50">Publish</Link>
+                <button onClick={logout} className="mono-label rounded-full border border-white/20 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] hover:border-white/50">Logout</button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="mono-label rounded-full border border-white/20 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] hover:border-white/50">Log in</Link>
+                <Link href="/signup" className="mono-label rounded-full border border-white/20 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] hover:border-white/50">Sign up</Link>
+              </>
+            )}
+          </div>
+        </nav>
+      </div>
+
+      <div className="border-t border-white/12">
+        <div className="mx-auto flex max-w-[var(--editable-container)] flex-col gap-2 px-5 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-12">
+          <p className="mono-label text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">© {year} {SITE_CONFIG.name}. {globalContent.footer?.bottomNote}</p>
+          <p className="mono-label text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">©2020 — {year}</p>
+        </div>
+      </div>
     </footer>
   )
 }
